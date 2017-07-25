@@ -1,0 +1,3 @@
+rootProject.name = 'Skippy'
+
+include ':app'
