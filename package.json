@@ -1,5 +1,5 @@
 {
-  "name": "Skippy",
+  "name": "skippy",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -15,11 +15,24 @@
   },
   "devDependencies": {
     "babel-jest": "20.0.3",
+    "babel-plugin-transform-inline-environment-variables": "^0.2.0",
     "babel-preset-react-native": "2.1.0",
     "jest": "20.0.4",
     "react-test-renderer": "16.0.0-alpha.12"
   },
   "jest": {
     "preset": "react-native"
-  }
+  },
+  "main": "index.android.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxthecabbie/skippy.git"
+  },
+  "author": "Ryan Ho",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/maxthecabbie/skippy/issues"
+  },
+  "homepage": "https://github.com/maxthecabbie/skippy#readme",
+  "description": ""
 }

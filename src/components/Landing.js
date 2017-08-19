@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import {ActivityIndicator, AsyncStorage} from "react-native";
 import {Home} from "./Home"
 import {Login} from "./Login"
 
@@ -7,25 +8,37 @@ export class Landing extends Component {
 		super(props);
 
 		this.state = {
-			hasToken: false
-		}
+			hasToken: false, 
+			isLoaded: false
+		};
 	}
 
-	componentWillMount() {
+	componentDidMount() {
+		AsyncStorage.getItem("id_token").then((token) => {
+			this.setState({
+				hasToken: token !== null, 
+				isLoaded: true 
+			})
+		});
 	}
 
 	render() {
-		if (this.state.hasToken) {
+		if (!this.state.isLoaded) {
 			return (
-				<Home/>
+				<ActivityIndicator />
 			);
 		}
 		else {
-			return (
-				<Login navigation={this.props.navigation} />
-
-			);
+			if (this.state.hasToken) {
+				return (
+					<Home/>
+				);
+			}
+			else {
+				return (
+					<Login navigation={this.props.navigation} />
+				);
+			}
 		}
-
 	}
 }

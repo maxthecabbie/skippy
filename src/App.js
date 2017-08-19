@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import {DrawerNavigator} from 'react-navigation';
+import React from "react";
+import {DrawerNavigator} from "react-navigation";
 import {Landing} from "./components/Landing";
 import {Home} from "./components/Home";
 import {Login} from "./components/Login";
