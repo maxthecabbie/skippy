@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {AsyncStorage} from "react-native";
 import {View, Text, StyleSheet} from "react-native";
 import {FormLabel, FormInput, Button} from "react-native-elements";
+import Config from "react-native-config"
 
 
 export class SignUp extends Component {
@@ -28,7 +29,7 @@ export class SignUp extends Component {
 	userSignup() {
 		const name = this.state.name;
 		const password = this.state.password;
-		const backendAPIBaseURL = process.env.BACKEND_API_BASE_URL;
+		const backendAPIBaseURL = Config.BACKEND_API_BASE_URL;
 		if (!name || !password) {
 			return;
 		}

@@ -1,7 +1,7 @@
 import React, {Component} from "react";
-import {ActivityIndicator, AsyncStorage} from "react-native";
-import {Home} from "./Home"
+import {ActivityIndicator, Text, AsyncStorage} from "react-native";
 import {Login} from "./Login"
+import HomeNavigator from "./HomeNavigator"
 
 export class Landing extends Component {
 	constructor(props) {
@@ -31,7 +31,7 @@ export class Landing extends Component {
 		else {
 			if (this.state.hasToken) {
 				return (
-					<Home/>
+					<HomeNavigator screenProps={{appNavigator: this.props.navigation}}/>
 				);
 			}
 			else {

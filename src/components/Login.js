@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {View, Text, StyleSheet, AsyncStorage} from "react-native";
 import {FormLabel, FormInput, Button} from "react-native-elements";
+import Config from "react-native-config"
 
 export class Login extends Component {
 	constructor(props) {
@@ -25,7 +26,7 @@ export class Login extends Component {
 	userLogin() {
 		const email = this.state.email;
 		const password = this.state.password;
-		const backendAPIBaseURL = process.env.BACKEND_API_BASE_URL;
+		const backendAPIBaseURL = Config.BACKEND_API_BASE_URL;
 		if (!email || !password) {
 			return;
 		}
