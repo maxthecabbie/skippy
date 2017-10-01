@@ -46,18 +46,19 @@ export class LogOut extends Component {
 				animationType={"slide"}
 				transparent={true}
 				visible={this.state.modalVisible}
+				onRequestClose={() => null}
 				>
 					<View style={styles.logOutModalContainer}>
 						<View style={styles.logOutModal}>
-							<View>
-
-								<Text style={styles.modalTitle}>Are you sure you want to log out?</Text>
-
+							<View style={styles.buttonContainer}>
 								<Button
 								raised
 								onPress={this.logOut}
 								backgroundColor="#6ad447"
 								title="Log Out"
+								buttonStyle={{
+									marginBottom: 1
+								}}
 								/>
 
 								<Button
@@ -66,7 +67,6 @@ export class LogOut extends Component {
 								title="Cancel"
 								onPress={this.closeLogOutModal}
 								/>
-
 							</View>
 						</View>
 					</View>
@@ -77,28 +77,27 @@ export class LogOut extends Component {
 }
 
 const styles = StyleSheet.create({
-  logOutButton: {
-  	marginRight: 15,
-    alignSelf: "flex-end"
-  },
-  logOutModalContainer: {
-  	position: "absolute",
-	left: 0,
-	right: 0,
-	top: 0,
-	bottom: 0,
-	justifyContent: "center", 
-	alignItems: "center",
-  },
-  logOutModal: {
-  	width: 250,
-  	height: 150,
-  	backgroundColor: "#9d9d9d",
-  	alignItems: "center",
-  	borderRadius: 10
-  },
-  modalTitle: {
-  	textAlign: "center",
-  	marginBottom: 15
-  }
+	logOutButton: {
+		marginRight: 15,
+		alignSelf: "flex-end"
+	},
+	logOutModalContainer: {
+		position: "absolute",
+		left: 0,
+		right: 0,
+		top: 0,
+		bottom: 0,
+		justifyContent: "center", 
+		alignItems: "center",
+	},
+	logOutModal: {
+		width: 300,
+		height: 175,
+		backgroundColor: "rgba(220, 220, 220, 0.75)",
+		alignItems: "center",
+		justifyContent: "center"
+	},
+	buttonContainer: {
+		width: 300
+	}
 });

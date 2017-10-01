@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {ActivityIndicator, Text, AsyncStorage} from "react-native";
-import {Login} from "./Login"
-import HomeNavigator from "./HomeNavigator"
+import {Login} from "../Login"
+import HomeNavigator from "../navigators/HomeNavigator"
 
 export class Landing extends Component {
 	constructor(props) {

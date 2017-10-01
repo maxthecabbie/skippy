@@ -1,7 +1,7 @@
 import React from "react";
 import {DrawerNavigator} from "react-navigation";
-import {Landing} from "./components/Landing";
-import HomeNavigator from "./components/HomeNavigator"
+import {Landing} from "./components/containers/Landing";
+import HomeNavigator from "./components/navigators/HomeNavigator"
 import {Login} from "./components/Login";
 import {SignUp} from "./components/SignUp";
 

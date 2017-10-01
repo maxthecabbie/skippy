@@ -3,6 +3,7 @@ import {AsyncStorage} from "react-native";
 import {View, Text, StyleSheet} from "react-native";
 import {FormLabel, FormInput, Button} from "react-native-elements";
 import Config from "react-native-config"
+import {signupValidator} from "../helpers/SignupValidation"
 
 
 export class SignUp extends Component {
@@ -10,9 +11,9 @@ export class SignUp extends Component {
 		super(props);
 
 		this.state = {
-			name: "",
-			email: "",
-			password: ""
+			username: "",
+			password: "",
+			passConfirm: ""
 		};
 		this.userSignup = this.userSignup.bind(this);
 	}
@@ -27,22 +28,27 @@ export class SignUp extends Component {
 	}
 
 	userSignup() {
-		const name = this.state.name;
+		const username = this.state.username;
 		const password = this.state.password;
+		const passConfirm = this.state.passConfirm;
+		const validateSignup = signupValidator(username, password, passConfirm);
 		const backendAPIBaseURL = Config.BACKEND_API_BASE_URL;
-		if (!name || !password) {
+
+		if (!validateSignup.validSignup) {
 			return;
 		}
 		fetch(backendAPIBaseURL + "/users", {
 			method: "POST",
 			headers: {"Accept": "application/json", "Content-Type": "application/json"},
 			body: JSON.stringify({
-				username: name,
+				username: username,
 				password: password,
+				passConfirm: passConfirm
 			})
 		})
 		.then((response) => response.json())
 		.then((responseData) => {
+			var a = responseData;
 			this.saveItem("id_token", responseData.id_token),
 			this.props.navigation.navigate("Home");
 		})
@@ -52,15 +58,11 @@ export class SignUp extends Component {
 	render() {
 		return (
 			<View style={styles.signupContainer}>
+				<Text style={styles.title}>Signup</Text>
 				<View>
-					<FormLabel>Name</FormLabel>
-					<FormInput value={this.state.name}
-					onChangeText={(name) => this.setState({name})}
-					/>
-
-					<FormLabel>Email</FormLabel>
-					<FormInput value={this.state.email}
-					onChangeText={(email) => this.setState({email})}
+					<FormLabel>Username</FormLabel>
+					<FormInput value={this.state.username}
+					onChangeText={(username) => this.setState({username})}
 					/>
 
 					<FormLabel>Password</FormLabel>
@@ -69,24 +71,42 @@ export class SignUp extends Component {
 					secureTextEntry={true}
 					/>
 
-					<Button onPress={this.userSignup} title="Sign Up"/>
+					<FormLabel>Confirm Password</FormLabel>
+					<FormInput value={this.state.passConfirm}
+					onChangeText={(passConfirm) => this.setState({passConfirm})}
+					secureTextEntry={true}
+					/>
 				</View>
 
 				<View style={styles.linkText}>
-					<Text onPress={() => this.props.navigation.navigate("Login")}>
-						Log In
+					<Text>
+						Already have an account?&nbsp;
+						<Text onPress={() => this.props.navigation.navigate("Login")}>
+							Log In here.
+						</Text>
 					</Text>
 				</View>
+
+				<Button
+				backgroundColor="#6ad447"
+				onPress={this.userSignup} title="Sign Up"
+				/>
 			</View>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
-  signupContainer: {
-    alignItems: "center"
-  },
-  linkText: {
-  	marginTop: 50
-  }
+	signupContainer: {
+		flex: 1,
+		justifyContent: "center"
+	},
+	title: {
+		textAlign: "center"
+	},
+	linkText: {
+		marginTop: 10,
+		marginLeft: 15,
+		marginBottom: 20
+	}
 });

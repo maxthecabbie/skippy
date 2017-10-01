@@ -1,14 +1,15 @@
 import React, {Component} from "react";
-import {View, Text, StyleSheet, AsyncStorage} from "react-native";
+import {Text, View, StyleSheet, AsyncStorage} from "react-native";
 import {FormLabel, FormInput, Button} from "react-native-elements";
-import Config from "react-native-config"
+import Config from "react-native-config";
+import {loginValidator} from "../helpers/LoginValidation"
 
 export class Login extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			email: "",
+			username: "",
 			password: ""
 		};
 		this.userLogin = this.userLogin.bind(this);
@@ -24,17 +25,19 @@ export class Login extends Component {
 	}
 
 	userLogin() {
-		const email = this.state.email;
+		const username = this.state.username;
 		const password = this.state.password;
+		const validLogin = loginValidator(username, password);
 		const backendAPIBaseURL = Config.BACKEND_API_BASE_URL;
-		if (!email || !password) {
+
+		if (!validLogin) {
 			return;
 		}
 		fetch(backendAPIBaseURL + "/sessions/create", {
 			method: "POST",
 			headers: { "Accept": "application/json", "Content-Type": "application/json"},
 			body: JSON.stringify({
-				username: email,
+				username: username,
 				password: password,
 			})
 		})
@@ -49,10 +52,11 @@ export class Login extends Component {
 	render() {
 		return (
 			<View style={styles.loginContainer}>
-				<View>
-					<FormLabel>Email</FormLabel>
-					<FormInput value={this.state.email}
-					onChangeText={(email) => this.setState({email})}
+				<Text style={styles.title}>Login</Text>
+				<View style={styles.loginForm}>
+					<FormLabel>username</FormLabel>
+					<FormInput value={this.state.username}
+					onChangeText={(username) => this.setState({username})}
 					/>
 
 					<FormLabel>Password</FormLabel>
@@ -60,24 +64,39 @@ export class Login extends Component {
 					onChangeText={(password) => this.setState({password})}
 					secureTextEntry={true}
 					/>
-					<Button onPress={this.userLogin} title="Login"/>
+					
 				</View>
 
 				<View style={styles.linkText}>
-					<Text onPress={() => this.props.navigation.navigate("SignUp")}>
-						Sign Up
+					<Text>
+						Don't have an account yet?&nbsp;
+						<Text onPress={() => this.props.navigation.navigate("SignUp")}>
+							Sign Up!
+						</Text>
 					</Text>
+
 				</View>
+
+				<Button
+				backgroundColor="#6ad447"
+				onPress={this.userLogin} title="Login"
+				/>
 			</View>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
-  loginContainer: {
-    alignItems: "center"
-  },
-  linkText: {
-  	marginTop: 50
-  }
+	loginContainer: {
+		flex: 1,
+		justifyContent: "center",
+	},
+	title: {
+		textAlign: "center"
+	},
+	linkText: {
+		marginTop: 10,
+		marginLeft: 15,
+		marginBottom: 20
+	}
 });

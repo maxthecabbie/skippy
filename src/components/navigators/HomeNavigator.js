@@ -1,9 +1,9 @@
 import React from "react";
 import {StackNavigator} from "react-navigation";
-import {LogOut} from "./LogOut";
-import {PlaceForm} from "./PlaceForm";
-import {Place} from "./Place";
-import {Queue} from "./Queue";
+import {LogOut} from "../LogOut";
+import {PlaceForm} from "../PlaceForm";
+import {Place} from "../Place";
+import {Queue} from "../Queue";
 
 const navigationOptions = ({screenProps}) => ({
 	headerRight: (
