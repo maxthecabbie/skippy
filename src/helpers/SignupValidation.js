@@ -46,15 +46,15 @@ export function signupValidator(username, password, passConfirm) {
     var errors = [];
     
     if (!usernameValidation.validUsername) {
-      validSignup = false;
-      errors = errors.concat(usernameValidation.usernameErrors);
+        validSignup = false;
+        errors = errors.concat(usernameValidation.usernameErrors);
     }
     if (!passwordValidation.validPassword) {
-      validSignup = false;
-      errors = errors.concat(passwordValidation.passwordErrors);
+        validSignup = false;
+        errors = errors.concat(passwordValidation.passwordErrors);
     }
     return {
-      validSignup: validSignup,
-      errors: errors
+        validSignup: validSignup,
+        errors: errors
     }
 }

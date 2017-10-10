@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import {View, StyleSheet, Text} from "react-native";
+import {FormLabel, FormInput, Button} from "react-native-elements";
 
 export class Queue extends Component {
 	render() {
@@ -23,6 +24,5 @@ const styles = StyleSheet.create({
 		
 	},
 	queueTitle: {
-
 	}
 })
