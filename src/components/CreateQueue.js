@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {View, Text, StyleSheet} from "react-native";
 import {FormLabel, FormInput, Button, Icon} from "react-native-elements";
+import Config from "react-native-config"
 
 export class CreateQueue extends Component {
 	constructor(props) {
@@ -9,9 +10,11 @@ export class CreateQueue extends Component {
 		this.state = {
 			queueName: ""
 		}
+		this.createQueue = this.createQueue.bind(this);
 	}
 
 	createQueue() {
+		const placeId = this.props.placeId;
 		const queueName = this.state.queueName;
 		const backendAPIBaseURL = Config.BACKEND_API_BASE_URL;
 		if (!queueName) {
@@ -21,12 +24,16 @@ export class CreateQueue extends Component {
 			method: "POST",
 			headers: {"Accept": "application/json", "Content-Type": "application/json"},
 			body: JSON.stringify({
+				placeId: placeId,
 				queueName: queueName
 			})
 		})
 		.then((response) => response.json())
 		.then((responseData) => {
-			this.props.closeModal;
+			const queueId = responseData.queueId;
+			const queueName = responseData.queueName;
+			this.props.updateQueues({id: queueId, name: queueName});
+			this.props.closeModal();
 		})
 		.done();
 	}

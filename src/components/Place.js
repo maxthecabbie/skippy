@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, Text, Modal, StyleSheet, FlatList} from "react-native";
+import {View, Text, Modal, StyleSheet, FlatList, Keyboard} from "react-native";
 import {CreateQueue} from "./CreateQueue"
 import {FormLabel, FormInput, Button} from "react-native-elements";
 
@@ -8,11 +8,13 @@ export class Place extends Component {
 		super(props);
 
 		this.state = {
-			createQueueModalVisible: false
+			createQueueModalVisible: false,
+			queues: this.props.navigation.state.params.queues
 		}
 		this.openQueue = this.openQueue.bind(this);
-		this.openCreateQueueModal= this.openCreateQueueModal.bind(this);
-		this.closeCreateQueueModal= this.closeCreateQueueModal.bind(this);
+		this.openCreateQueueModal = this.openCreateQueueModal.bind(this);
+		this.closeCreateQueueModal = this.closeCreateQueueModal.bind(this);
+		this.updateQueues = this.updateQueues.bind(this);
 	}
 
 	openQueue() {
@@ -27,9 +29,29 @@ export class Place extends Component {
 		this.setState({createQueueModalVisible: false});
 	}
 
+	updateQueues(newQueue) {
+		this.setState({
+			queues: this.state.queues.concat([newQueue])
+		});
+	}
+
+	sortQueues(a, b) {
+		const queueNameA = a.name.toUpperCase();
+		const queueNameB = b.name.toUpperCase();
+		let comparison = 0;
+
+		if (queueNameA > queueNameB) {
+			comparison = 1;
+		} 
+		else if (queueNameA < queueNameB) {
+			comparison = -1;
+		}
+		return comparison;
+	}
+
 	render() {
 		const place = this.props.navigation.state.params.place[0];
-		const queues = this.props.navigation.state.params.queues;
+		const queues = this.state.queues.sort(this.sortQueues);
 
 		return (
 			<View style={styles.placeContainer}>
@@ -52,8 +74,7 @@ export class Place extends Component {
 					data={queues}
 		        	renderItem={({item}) => 
 		        		<Text style={styles.queueListItem} onPress={this.openQueue}>
-		        			Queue id: {item.id}{"\n"}
-		        			{item.name} 
+		        			Queue name: {item.name} 
 		        		</Text>}
 		        	keyExtractor={(item, index) => index}
 		        />
@@ -71,7 +92,7 @@ export class Place extends Component {
 				visible={this.state.createQueueModalVisible}
 				onRequestClose={() => null}
 				>
-					<CreateQueue closeModal={this.closeCreateQueueModal} />
+					<CreateQueue placeId={place.id} closeModal={this.closeCreateQueueModal} updateQueues={this.updateQueues} />
 				</Modal>
 			</View>
 		);

@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {View, Text, StyleSheet} from "react-native";
 import {FormLabel, FormInput, Button, Icon} from "react-native-elements";
+import Config from "react-native-config"
 
 export class CreatePlace extends Component {
 	constructor(props) {
@@ -9,6 +10,7 @@ export class CreatePlace extends Component {
 		this.state = {
 			placeName: ""
 		}
+		this.createPlace = this.createPlace.bind(this);
 	}
 
 	createPlace() {
@@ -26,7 +28,7 @@ export class CreatePlace extends Component {
 		})
 		.then((response) => response.json())
 		.then((responseData) => {
-			this.props.closeModal;
+			this.props.closeModal();
 		})
 		.done();
 	}
@@ -35,23 +37,23 @@ export class CreatePlace extends Component {
 		return (
 			<View style={styles.createPlaceModalContainer}>
 				<View style={styles.header}>
-				<Icon name="keyboard-arrow-left"
-				size={30}
-				style={styles.backButton}
-				onPress={this.props.closeModal}
-				/>
+					<Icon name="keyboard-arrow-left"
+					size={30}
+					style={styles.backButton}
+					onPress={this.props.closeModal}
+					/>
 				</View>
 				<View style={styles.createPlaceForm}>
-				<FormLabel>Name</FormLabel>
-				<FormInput value={this.state.placeName}
-				onChangeText={(placeId) => this.setState({placeId})}
-				/>
-				<Button
-				raised
-				onPress={this.openPlace}
-				backgroundColor="#6ad447"
-				title="Create"
-				/>
+					<FormLabel>Name</FormLabel>
+					<FormInput value={this.state.placeName}
+					onChangeText={(placeName) => this.setState({placeName})}
+					/>
+					<Button
+					raised
+					onPress={this.createPlace}
+					backgroundColor="#6ad447"
+					title="Create"
+					/>
 				</View>
 			</View>
 		);
