@@ -15,9 +15,12 @@ export class Login extends Component {
 		this.userLogin = this.userLogin.bind(this);
 	}
 
-	async saveItem(item, selectedValue) {
+	async saveItem(responseData) {
 		try {
-			await AsyncStorage.setItem(item, selectedValue);
+			await AsyncStorage.multiSet([
+				["idToken", responseData.id_token],
+				["userId", responseData.user.id.toString()]
+				]);
 		} 
 		catch (error) {
 			console.error("AsyncStorage error: " + error.message);
@@ -43,7 +46,7 @@ export class Login extends Component {
 		})
 		.then((response) => response.json())
 		.then((responseData) => {
-			this.saveItem("id_token", responseData.id_token),
+			this.saveItem(responseData),
 			this.props.navigation.navigate("Home");
 		})
 		.done();

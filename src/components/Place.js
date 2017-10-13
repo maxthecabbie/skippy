@@ -9,7 +9,7 @@ export class Place extends Component {
 
 		this.state = {
 			createQueueModalVisible: false,
-			queues: this.props.navigation.state.params.queues
+			queues: props.navigation.state.params.queues
 		}
 		this.openQueue = this.openQueue.bind(this);
 		this.openCreateQueueModal = this.openCreateQueueModal.bind(this);
@@ -17,8 +17,10 @@ export class Place extends Component {
 		this.updateQueues = this.updateQueues.bind(this);
 	}
 
-	openQueue() {
-		this.props.navigation.navigate("Queue");
+	openQueue(queue) {
+		this.props.navigation.navigate("Queue", {
+			queue: queue
+		});
 	}
 
 	openCreateQueueModal() {
@@ -73,7 +75,8 @@ export class Place extends Component {
 		        	style={styles.queueList}
 					data={queues}
 		        	renderItem={({item}) => 
-		        		<Text style={styles.queueListItem} onPress={this.openQueue}>
+		        		<Text style={styles.queueListItem} 
+		        			onPress={() => this.openQueue(item)}>
 		        			Queue name: {item.name} 
 		        		</Text>}
 		        	keyExtractor={(item, index) => index}

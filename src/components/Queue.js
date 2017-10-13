@@ -4,11 +4,12 @@ import {FormLabel, FormInput, Button} from "react-native-elements";
 
 export class Queue extends Component {
 	render() {
+		const queue = this.props.navigation.state.params.queue;
 		return (
 			<View style={styles.queueContainer}>
 				<View style={styles.queueTitle}>
 					<Text>
-						Queue
+						{queue.id} {queue.name}
 			        </Text>
 		        </View>
 			</View>
