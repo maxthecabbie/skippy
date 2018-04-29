@@ -120,16 +120,17 @@ export class Place extends Component {
 				<Text style={styles.queuesTitle}>
 					Queues for {place.name}
 				</Text>
-	        <FlatList
-	        	style={styles.queueList}
-						data={queues}
-	        	renderItem={({item}) => 
-	        		<Text style={styles.queueListItem} 
-	        			onPress={() => this.openQueue(item)}>
-	        			Queue name: {item.name} 
-	        		</Text>}
-	        	keyExtractor={(item, index) => index}
-	        />
+
+        <FlatList
+        	style={styles.queueList}
+					data={queues}
+					keyExtractor={(item, index) => index}
+        	renderItem={({item}) => 
+        		<Text style={styles.queueListItem} 
+        			onPress={() => this.openQueue(item)}>
+        			Queue name: {item.name} 
+        		</Text>}
+        />
 
 	      {this.renderAdminFeatures()}
 			</View>

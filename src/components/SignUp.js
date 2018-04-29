@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import { AsyncStorage } from "react-native";
 import { View, Text, StyleSheet } from "react-native";
 import { FormLabel, FormInput, Button } from "react-native-elements";
+import { ErrorText } from "./ErrorText";
 import Config from "react-native-config"
-import { signupValidator } from "../helpers/SignupValidation"
+import { signupValidator } from "../helpers/SignupLoginValidation"
 
 
 export class SignUp extends Component {
@@ -13,19 +14,23 @@ export class SignUp extends Component {
     this.state = {
       username: "",
       password: "",
-      passConfirm: ""
+      passConfirm: "",
+      errors: null
     };
     this.userSignup = this.userSignup.bind(this);
+    this.displayErrors = this.displayErrors.bind(this);
+    this.handleError = this.handleError.bind(this);
   }
 
-  async saveItem(responseData) {
+  async saveItem(data) {
     try {
       await AsyncStorage.multiSet([
-        ["idToken", responseData.id_token],
-        ["userId", responseData.user.id.toString()]
+        ["idToken", data.id_token],
+        ["userId", data.user.id.toString()]
       ]);
+      this.props.navigation.navigate("Home");
     } catch (error) {
-      console.error("AsyncStorage error: " + error.message);
+      this.handleError("There was a problem signing up. Please try again.");
     }
   }
 
@@ -37,6 +42,9 @@ export class SignUp extends Component {
     const backendAPIBaseURL = Config.BACKEND_API_BASE_URL;
 
     if (!validateSignup.validSignup) {
+      this.setState({
+        errors: validateSignup.errors
+      });
       return;
     }
     fetch(backendAPIBaseURL + "/users", {
@@ -48,15 +56,45 @@ export class SignUp extends Component {
           passConfirm: passConfirm
         })
       })
-      .then((response) => response.json())
+      .then((response) =>
+        response.json().then((data) => ({
+          data: data,
+          status: response.status
+        }))
+      )
       .then((responseData) => {
-        this.saveItem(responseData),
-          this.props.navigation.navigate("Home");
+        const status = responseData.status;
+        const data = responseData.data;
+
+        if (status === 201) {
+          this.saveItem(data);
+        } else if (status === 400) {
+          this.handleError(data.errorMsg);
+        } else {
+          throw "Unexpected server response";
+        }
+
       })
       .catch((error) => {
-        console.log(error);
-      })
-      .done();
+        this.handleError("There was a problem signing up. Please try again.");
+        return;
+      });
+  }
+
+  handleError(errorMsg) {
+    let errors = [errorMsg];
+    this.setState({
+      errors: errors
+    });
+  }
+
+  displayErrors() {
+    const errors = this.state.errors;
+    if (errors !== null && errors.length > 0) {
+      return (
+        <ErrorText text={errors[0]}/>
+      )
+    }
   }
 
   render() {
@@ -95,6 +133,10 @@ export class SignUp extends Component {
 				backgroundColor="#6ad447"
 				onPress={this.userSignup} title="Sign Up"
 				/>
+
+        {this.displayErrors()}
+
+        <ErrorText/>
 			</View>
     );
   }

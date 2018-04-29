@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { Text, View, StyleSheet, AsyncStorage } from "react-native";
 import { FormLabel, FormInput, Button } from "react-native-elements";
+import { ErrorText } from "./ErrorText";
 import Config from "react-native-config";
-import { loginValidator } from "../helpers/LoginValidation"
+import { loginValidator } from "../helpers/SignupLoginValidation"
 
 export class Login extends Component {
   constructor(props) {
@@ -10,29 +11,37 @@ export class Login extends Component {
 
     this.state = {
       username: "",
-      password: ""
+      password: "",
+      errors: null
     };
     this.userLogin = this.userLogin.bind(this);
+    this.handleError = this.handleError.bind(this);
+    this.dispalyErrors = this.displayErrors.bind(this);
   }
 
-  async saveItem(responseData) {
+  async saveItem(data) {
     try {
       await AsyncStorage.multiSet([
-        ["idToken", responseData.id_token],
-        ["userId", responseData.user.id.toString()]
+        ["idToken", data.id_token],
+        ["userId", data.user.id.toString()]
       ]);
+      this.props.navigation.navigate("Home");
     } catch (error) {
-      console.error("AsyncStorage error: " + error.message);
+      this.handleError("There was a problem logging in. Please try again.");
+      return;
     }
   }
 
   userLogin() {
     const username = this.state.username;
     const password = this.state.password;
-    const validLogin = loginValidator(username, password);
+    const validateLogin = loginValidator(username, password);
     const backendAPIBaseURL = Config.BACKEND_API_BASE_URL;
 
-    if (!validLogin) {
+    if (!validateLogin.validLogin) {
+      this.setState({
+        errors: validateLogin.errors
+      });
       return;
     }
     fetch(backendAPIBaseURL + "/sessions/create", {
@@ -43,12 +52,45 @@ export class Login extends Component {
           password: password,
         })
       })
-      .then((response) => response.json())
+      .then((response) =>
+        response.json().then((data) => ({
+          data: data,
+          status: response.status
+        }))
+      )
       .then((responseData) => {
-        this.saveItem(responseData),
-          this.props.navigation.navigate("Home");
+        const status = responseData.status;
+        const data = responseData.data;
+
+        if (status === 201) {
+          this.saveItem(data);
+        } else if (status === 401) {
+          this.handleError(data.errorMsg);
+        } else {
+          throw "Unexpected server response";
+        }
+
       })
-      .done();
+      .catch((error) => {
+        this.handleError("There was a problem logging in. Please try again.");
+        return;
+      });
+  }
+
+  handleError(errorMsg) {
+    let errors = [errorMsg];
+    this.setState({
+      errors: errors
+    });
+  }
+
+  displayErrors() {
+    const errors = this.state.errors;
+    if (errors !== null && errors.length > 0) {
+      return (
+        <ErrorText text={errors[0]}/>
+      )
+    }
   }
 
   render() {
@@ -83,6 +125,9 @@ export class Login extends Component {
 				backgroundColor="#6ad447"
 				onPress={this.userLogin} title="Login"
 				/>
+
+        {this.displayErrors()}
+
 			</View>
     );
   }
