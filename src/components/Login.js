@@ -1,63 +1,62 @@
-import React, {Component} from "react";
-import {Text, View, StyleSheet, AsyncStorage} from "react-native";
-import {FormLabel, FormInput, Button} from "react-native-elements";
+import React, { Component } from "react";
+import { Text, View, StyleSheet, AsyncStorage } from "react-native";
+import { FormLabel, FormInput, Button } from "react-native-elements";
 import Config from "react-native-config";
-import {loginValidator} from "../helpers/LoginValidation"
+import { loginValidator } from "../helpers/LoginValidation"
 
 export class Login extends Component {
-	constructor(props) {
-		super(props);
+  constructor(props) {
+    super(props);
 
-		this.state = {
-			username: "",
-			password: ""
-		};
-		this.userLogin = this.userLogin.bind(this);
-	}
+    this.state = {
+      username: "",
+      password: ""
+    };
+    this.userLogin = this.userLogin.bind(this);
+  }
 
-	async saveItem(responseData) {
-		try {
-			await AsyncStorage.multiSet([
-				["idToken", responseData.id_token],
-				["userId", responseData.user.id.toString()]
-				]);
-		} 
-		catch (error) {
-			console.error("AsyncStorage error: " + error.message);
-		}
-	}
+  async saveItem(responseData) {
+    try {
+      await AsyncStorage.multiSet([
+        ["idToken", responseData.id_token],
+        ["userId", responseData.user.id.toString()]
+      ]);
+    } catch (error) {
+      console.error("AsyncStorage error: " + error.message);
+    }
+  }
 
-	userLogin() {
-		const username = this.state.username;
-		const password = this.state.password;
-		const validLogin = loginValidator(username, password);
-		const backendAPIBaseURL = Config.BACKEND_API_BASE_URL;
+  userLogin() {
+    const username = this.state.username;
+    const password = this.state.password;
+    const validLogin = loginValidator(username, password);
+    const backendAPIBaseURL = Config.BACKEND_API_BASE_URL;
 
-		if (!validLogin) {
-			return;
-		}
-		fetch(backendAPIBaseURL + "/sessions/create", {
-			method: "POST",
-			headers: { "Accept": "application/json", "Content-Type": "application/json"},
-			body: JSON.stringify({
-				username: username,
-				password: password,
-			})
-		})
-		.then((response) => response.json())
-		.then((responseData) => {
-			this.saveItem(responseData),
-			this.props.navigation.navigate("Home");
-		})
-		.done();
-	}
+    if (!validLogin) {
+      return;
+    }
+    fetch(backendAPIBaseURL + "/sessions/create", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+        })
+      })
+      .then((response) => response.json())
+      .then((responseData) => {
+        this.saveItem(responseData),
+          this.props.navigation.navigate("Home");
+      })
+      .done();
+  }
 
-	render() {
-		return (
-			<View style={styles.loginContainer}>
+  render() {
+    return (
+      <View style={styles.loginContainer}>
 				<Text style={styles.title}>Login</Text>
 				<View style={styles.loginForm}>
-					<FormLabel>username</FormLabel>
+					<FormLabel>Username</FormLabel>
 					<FormInput value={this.state.username}
 					onChangeText={(username) => this.setState({username})}
 					/>
@@ -85,21 +84,21 @@ export class Login extends Component {
 				onPress={this.userLogin} title="Login"
 				/>
 			</View>
-		);
-	}
+    );
+  }
 }
 
 const styles = StyleSheet.create({
-	loginContainer: {
-		flex: 1,
-		justifyContent: "center",
-	},
-	title: {
-		textAlign: "center"
-	},
-	linkText: {
-		marginTop: 10,
-		marginLeft: 15,
-		marginBottom: 20
-	}
+  loginContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  title: {
+    textAlign: "center"
+  },
+  linkText: {
+    marginTop: 10,
+    marginLeft: 15,
+    marginBottom: 20
+  }
 });

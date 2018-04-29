@@ -1,41 +1,48 @@
-import React, {Component} from "react";
-import {View, Text, StyleSheet} from "react-native";
-import {FormLabel, FormInput, Button, Icon} from "react-native-elements";
+import React, { Component } from "react";
+import { View, Text, StyleSheet, AsyncStorage } from "react-native";
+import { FormLabel, FormInput, Button, Icon } from "react-native-elements";
 import Config from "react-native-config"
 
 export class CreatePlace extends Component {
-	constructor(props) {
-		super(props);
+  constructor(props) {
+    super(props);
 
-		this.state = {
-			placeName: ""
-		}
-		this.createPlace = this.createPlace.bind(this);
-	}
+    this.state = {
+      placeName: ""
+    }
+    this.createPlace = this.createPlace.bind(this);
+  }
 
-	createPlace() {
-		const placeName = this.state.placeName;
-		const backendAPIBaseURL = Config.BACKEND_API_BASE_URL;
-		if (!placeName) {
-			return;
-		}
-		fetch(backendAPIBaseURL + "/places", {
-			method: "POST",
-			headers: {"Accept": "application/json", "Content-Type": "application/json"},
-			body: JSON.stringify({
-				placeName: placeName
-			})
-		})
-		.then((response) => response.json())
-		.then((responseData) => {
-			this.props.closeModal();
-		})
-		.done();
-	}
+  createPlace() {
+    const placeName = this.state.placeName;
+    const backendAPIBaseURL = Config.BACKEND_API_BASE_URL;
+    if (!placeName) {
+      return;
+    }
+    AsyncStorage.getItem("userId").then((userId) => {
+      fetch(backendAPIBaseURL + "/places", {
+          method: "POST",
+          headers: { "Accept": "application/json", "Content-Type": "application/json" },
+          body: JSON.stringify({
+            placeName: placeName,
+            userId: userId
+          })
+        })
+        .then((response) => {
+          if (response) {
+            return response.json();
+          }
+        })
+        .then((responseData) => {
+          this.props.closeModal();
+        })
+        .done();
+    });
+  }
 
-	render() {
-		return (
-			<View style={styles.createPlaceModalContainer}>
+  render() {
+    return (
+      <View style={styles.createPlaceModalContainer}>
 				<View style={styles.header}>
 					<Icon name="keyboard-arrow-left"
 					size={30}
@@ -56,28 +63,28 @@ export class CreatePlace extends Component {
 					/>
 				</View>
 			</View>
-		);
-	}	
+    );
+  }
 }
 
 const styles = StyleSheet.create({
-	createPlaceModalContainer: {
-		position: "absolute",
-		left: 0,
-		right: 0,
-		top: 0,
-		bottom: 0
-	},
-	header: {
-		flex: 0.5
-	},
-	createPlaceForm: {
-		flex: 1
-	},
-	backButton: {
-		position: "absolute",
-		left: 0,
-		marginTop: 10,
-		marginLeft: 10
-	}
+  createPlaceModalContainer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0
+  },
+  header: {
+    flex: 0.5
+  },
+  createPlaceForm: {
+    flex: 1
+  },
+  backButton: {
+    position: "absolute",
+    left: 0,
+    marginTop: 10,
+    marginLeft: 10
+  }
 })
