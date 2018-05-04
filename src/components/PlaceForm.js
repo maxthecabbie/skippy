@@ -1,25 +1,34 @@
 import React, { Component } from "react";
 import { View, Text, Modal, StyleSheet } from "react-native";
+import { connect } from "react-redux";
 import { CreatePlace } from "./CreatePlace"
 import { FormLabel, FormInput, Button } from "react-native-elements";
+import { ErrorText } from "./ErrorText";
 import Config from "react-native-config"
 
-export class PlaceForm extends Component {
+class PlaceForm extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       placeId: "",
       placeName: "",
-      createPlaceModalVisible: false
+      createPlaceModalVisible: false,
+      errors: null
     }
     this.openPlace = this.openPlace.bind(this);
     this.openCreatePlaceModal = this.openCreatePlaceModal.bind(this);
     this.closeCreatePlaceModal = this.closeCreatePlaceModal.bind(this);
+    this.handleError = this.handleError.bind(this);
+    this.displayErrors = this.displayErrors.bind(this);
+    this.clearState = this.clearState.bind(this);
   }
 
   openCreatePlaceModal() {
-    this.setState({ createPlaceModalVisible: true });
+    this.setState({
+      createPlaceModalVisible: true,
+      errors: null
+    });
   }
 
   closeCreatePlaceModal() {
@@ -32,23 +41,60 @@ export class PlaceForm extends Component {
     fetch(backendAPIBaseURL + "/places/" + placeId, {
         method: "GET"
       })
-      .then((response) => {
-        if (response) {
-          return response.json();
+      .then((response) =>
+        response.json().then((data) => ({
+          data: data,
+          status: response.status
+        }))
+      )
+      .then((responseData) => {
+        const status = responseData.status;
+
+        if (status === 200) {
+          const place = responseData.data.placeRows;
+          const queues = responseData.data.queueRows;
+          const placeAdmins = responseData.data.adminRows;
+
+          this.clearState();
+          this.props.navigation.navigate("Place", {
+            place: place,
+            queues: queues,
+            placeAdmins: placeAdmins,
+            userId: this.props.userId
+          });
+        } else if (status === 400 || status === 401) {
+          this.handleError(responseData.data.errorMsg);
+        } else {
+          throw "Unexpected server response"
         }
       })
-      .then((responseData) => {
-        const place = responseData.placeRows;
-        const queues = responseData.queueRows;
-        const placeAdmins = responseData.adminRows;
+      .catch((error) => {
+        this.handleError("There was a problem retrieving the requested place. Please try again.");
+        return;
+      });
+  }
 
-        this.props.navigation.navigate("Place", {
-          place: place,
-          queues: queues,
-          placeAdmins: placeAdmins
-        });
-      })
-      .done();
+  handleError(errorMsg) {
+    let errors = [errorMsg];
+    this.setState({
+      errors: errors
+    });
+  }
+
+  displayErrors() {
+    const errors = this.state.errors;
+    if (errors !== null && errors.length > 0) {
+      return (
+        <ErrorText text={errors[0]}/>
+      )
+    }
+  }
+
+  clearState() {
+    this.setState({
+      placeId: "",
+      errors: null
+    });
   }
 
   render() {
@@ -65,6 +111,8 @@ export class PlaceForm extends Component {
 				backgroundColor="#6ad447"
 				title="Go"
 				/>
+
+				{this.displayErrors()}
 				</View>
 
 				<Button
@@ -80,7 +128,7 @@ export class PlaceForm extends Component {
 				visible={this.state.createPlaceModalVisible}
 				onRequestClose={() => null}
 				>
-					<CreatePlace closeModal={this.closeCreatePlaceModal}/>
+					<CreatePlace closeModal={this.closeCreatePlaceModal} userId={this.props.userId} />
 				</Modal>
 			</View>
     );
@@ -109,3 +157,10 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   }
 })
+
+const mapStateToProps = state => ({
+  idToken: state.auth.idToken,
+  userId: state.auth.userId
+});
+
+export default connect(mapStateToProps, null)(PlaceForm)

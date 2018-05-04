@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import { AsyncStorage } from "react-native";
+import { connect } from "react-redux";
 import { View, Text, StyleSheet } from "react-native";
 import { FormLabel, FormInput, Button } from "react-native-elements";
 import { ErrorText } from "./ErrorText";
-import Config from "react-native-config"
-import { signupValidator } from "../helpers/SignupLoginValidation"
+import Config from "react-native-config";
+import { signupValidator } from "../helpers/SignupLoginValidation";
 
 
-export class SignUp extends Component {
+class Signup extends Component {
   constructor(props) {
     super(props);
 
@@ -28,7 +29,8 @@ export class SignUp extends Component {
         ["idToken", data.id_token],
         ["userId", data.user.id.toString()]
       ]);
-      this.props.navigation.navigate("Home");
+      this.props.saveUserData(data.id_token, data.user.id);
+      this.props.navigation.navigate("Place");
     } catch (error) {
       this.handleError("There was a problem signing up. Please try again.");
     }
@@ -156,3 +158,9 @@ const styles = StyleSheet.create({
     marginBottom: 20
   }
 });
+
+const mapDispatchToProps = (dispatch) => ({
+  saveUserData: (idToken, userId) => { dispatch(authActions.saveUserData(idToken, userId)); }
+});
+
+export default connect(null, mapDispatchToProps)(Signup);

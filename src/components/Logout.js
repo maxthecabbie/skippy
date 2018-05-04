@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import { View, Modal, Text, StyleSheet, AsyncStorage } from "react-native";
+import { connect } from "react-redux";
+import { authActions } from "../actions/auth";
 import { Icon, Button } from "react-native-elements";
+import { authConstants } from "../actions/actions.constants";
 
-export class LogOut extends Component {
+class Logout extends Component {
   constructor(props) {
     super(props);
 
@@ -25,8 +28,9 @@ export class LogOut extends Component {
 
   async logOut() {
     try {
-      await AsyncStorage.removeItem("idToken");
+      await AsyncStorage.multiRemove(["idToken", "userId"]);
       this.props.screenProps.appNavigator.navigate("Login");
+      this.props.clearUserData();
     } catch (error) {
       console.error("Log out error: " + error.message);
     }
@@ -100,3 +104,9 @@ const styles = StyleSheet.create({
     width: 300
   }
 });
+
+const mapDispatchToProps = (dispatch) => ({
+  clearUserData: () => { dispatch(authActions.clearUserData()); }
+});
+
+export default connect(null, mapDispatchToProps)(Logout);

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, AsyncStorage } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import { connect } from "react-redux";
 import { FormLabel, FormInput, Button, Icon } from "react-native-elements";
 import Config from "react-native-config"
 
@@ -16,28 +17,29 @@ export class CreatePlace extends Component {
   createPlace() {
     const placeName = this.state.placeName;
     const backendAPIBaseURL = Config.BACKEND_API_BASE_URL;
+    const userId = this.props.userId;
     if (!placeName) {
       return;
     }
-    AsyncStorage.getItem("userId").then((userId) => {
-      fetch(backendAPIBaseURL + "/places", {
-          method: "POST",
-          headers: { "Accept": "application/json", "Content-Type": "application/json" },
-          body: JSON.stringify({
-            placeName: placeName,
-            userId: userId
-          })
+
+    fetch(backendAPIBaseURL + "/places", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          placeName: placeName,
+          userId: userId
         })
-        .then((response) => {
-          if (response) {
-            return response.json();
-          }
-        })
-        .then((responseData) => {
-          this.props.closeModal();
-        })
-        .done();
-    });
+      })
+      .then((response) => {
+        if (response) {
+          return response.json();
+        }
+      })
+      .then((responseData) => {
+        this.props.closeModal();
+      })
+      .done();
+
   }
 
   render() {
@@ -87,4 +89,4 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: 10
   }
-})
+});

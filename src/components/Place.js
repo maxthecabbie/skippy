@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, Modal, StyleSheet, FlatList, Keyboard, AsyncStorage } from "react-native";
+import { View, Text, Modal, StyleSheet, FlatList, Keyboard } from "react-native";
 import { CreateQueue } from "./CreateQueue"
 import { FormLabel, FormInput, Button } from "react-native-elements";
 
@@ -8,7 +8,6 @@ export class Place extends Component {
     super(props);
 
     this.state = {
-      userId: null,
       createQueueModalVisible: false,
       queues: props.navigation.state.params.queues
     }
@@ -18,14 +17,6 @@ export class Place extends Component {
     this.updateQueues = this.updateQueues.bind(this);
     this.isAdmin = this.isAdmin.bind(this);
     this.renderAdminFeatures = this.renderAdminFeatures.bind(this);
-  }
-
-  componentWillMount() {
-    AsyncStorage.getItem("userId").then((userId) => {
-      this.setState({
-        userId: userId
-      })
-    });
   }
 
   openQueue(queue) {
@@ -62,7 +53,7 @@ export class Place extends Component {
   }
 
   isAdmin() {
-    const userId = this.state.userId;
+    const userId = this.props.navigation.state.params.userId;
     const admins = this.props.navigation.state.params.placeAdmins;
     if (userId !== null) {
       for (var i = 0; i < admins.length; i++) {
