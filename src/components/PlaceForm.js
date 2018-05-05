@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, Modal, StyleSheet } from "react-native";
+import { View, Text, Modal, StyleSheet, Keyboard } from "react-native";
 import { connect } from "react-redux";
 import { CreatePlace } from "./CreatePlace"
 import { FormLabel, FormInput, Button } from "react-native-elements";
@@ -20,7 +20,6 @@ class PlaceForm extends Component {
     this.openCreatePlaceModal = this.openCreatePlaceModal.bind(this);
     this.closeCreatePlaceModal = this.closeCreatePlaceModal.bind(this);
     this.handleError = this.handleError.bind(this);
-    this.displayErrors = this.displayErrors.bind(this);
     this.clearState = this.clearState.bind(this);
   }
 
@@ -62,6 +61,7 @@ class PlaceForm extends Component {
             placeAdmins: placeAdmins,
             userId: this.props.userId
           });
+          Keyboard.dismiss();
         } else if (status === 400 || status === 401) {
           this.handleError(responseData.data.errorMsg);
         } else {
@@ -79,15 +79,6 @@ class PlaceForm extends Component {
     this.setState({
       errors: errors
     });
-  }
-
-  displayErrors() {
-    const errors = this.state.errors;
-    if (errors !== null && errors.length > 0) {
-      return (
-        <ErrorText text={errors[0]}/>
-      )
-    }
   }
 
   clearState() {
@@ -112,7 +103,7 @@ class PlaceForm extends Component {
 				title="Go"
 				/>
 
-				{this.displayErrors()}
+				<ErrorText errors={this.state.errors} />
 				</View>
 
 				<Button

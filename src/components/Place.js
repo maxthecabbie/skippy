@@ -20,8 +20,10 @@ export class Place extends Component {
   }
 
   openQueue(queue) {
-    this.props.navigation.navigate("Queue", {
-      queue: queue
+    const isAdmin = this.isAdmin();
+    this.props.navigation.navigate("QueueContainer", {
+      queue: queue,
+      isAdmin: isAdmin
     });
   }
 
@@ -97,17 +99,6 @@ export class Place extends Component {
 
     return (
       <View style={styles.placeContainer}>
-				<View style={styles.queueForm}>
-					<FormLabel>{place.name}</FormLabel>
-					<FormInput/>
-				</View>
-				<Button
-				raised
-				onPress={this.openQueue}
-				backgroundColor="#6ad447"
-				title="Go"
-				/>
-
 				<Text style={styles.queuesTitle}>
 					Queues for {place.name}
 				</Text>
@@ -134,12 +125,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     flex: 1
   },
-  queueForm: {
-    marginBottom: 15
-  },
   queuesTitle: {
     marginTop: 15,
-    marginLeft: 15
+    marginLeft: 15,
+    fontSize: 25,
+    fontWeight: "500"
   },
   queueList: {
     marginTop: 15,

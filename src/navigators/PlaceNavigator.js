@@ -3,7 +3,7 @@ import { StackNavigator } from "react-navigation";
 import Logout from "../components/Logout";
 import PlaceForm from "../components/PlaceForm";
 import { Place } from "../components/Place";
-import { Queue } from "../components/Queue";
+import { QueueContainer } from "../containers/QueueContainer";
 
 const navigationOptions = ({ screenProps }) => ({
   headerRight: (
@@ -25,8 +25,8 @@ const PlaceNavigator = StackNavigator({
     screen: Place,
     navigationOptions: navigationOptions
   },
-  Queue: {
-    screen: Queue,
+  QueueContainer: {
+    screen: QueueContainer,
     navigationOptions: navigationOptions
   }
 }, {

@@ -19,7 +19,6 @@ class Login extends Component {
     };
     this.userLogin = this.userLogin.bind(this);
     this.handleError = this.handleError.bind(this);
-    this.dispalyErrors = this.displayErrors.bind(this);
   }
 
   async saveItem(data) {
@@ -88,15 +87,6 @@ class Login extends Component {
     });
   }
 
-  displayErrors() {
-    const errors = this.state.errors;
-    if (errors !== null && errors.length > 0) {
-      return (
-        <ErrorText text={errors[0]}/>
-      )
-    }
-  }
-
   render() {
     return (
       <View style={styles.loginContainer}>
@@ -130,7 +120,7 @@ class Login extends Component {
 				onPress={this.userLogin} title="Login"
 				/>
 
-        {this.displayErrors()}
+        <ErrorText errors={this.state.errors} />
 
 			</View>
     );

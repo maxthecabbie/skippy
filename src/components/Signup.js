@@ -19,7 +19,6 @@ class Signup extends Component {
       errors: null
     };
     this.userSignup = this.userSignup.bind(this);
-    this.displayErrors = this.displayErrors.bind(this);
     this.handleError = this.handleError.bind(this);
   }
 
@@ -90,15 +89,6 @@ class Signup extends Component {
     });
   }
 
-  displayErrors() {
-    const errors = this.state.errors;
-    if (errors !== null && errors.length > 0) {
-      return (
-        <ErrorText text={errors[0]}/>
-      )
-    }
-  }
-
   render() {
     return (
       <View style={styles.signupContainer}>
@@ -136,7 +126,7 @@ class Signup extends Component {
 				onPress={this.userSignup} title="Sign Up"
 				/>
 
-        {this.displayErrors()}
+        <ErrorText errors={this.state.errors} />
 
         <ErrorText/>
 			</View>

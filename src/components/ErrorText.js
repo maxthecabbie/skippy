@@ -2,11 +2,18 @@ import React from "react";
 import { Text, View, StyleSheet } from "react-native";
 
 export const ErrorText = (props) => {
-  return (
-    <Text style={styles.errorText}>
-      {props.text}
-    </Text>
-  );
+
+  const errors = props.errors;
+
+  if (errors !== null) {
+    return (
+      <Text style={styles.errorText}>
+        {errors[0]}
+      </Text>
+    );
+  } else {
+    return null;
+  }
 };
 
 const styles = StyleSheet.create({

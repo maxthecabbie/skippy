@@ -19,12 +19,13 @@ class Landing extends Component {
   componentDidMount() {
     AsyncStorage.multiGet(["idToken", "userId"]).then((storage) => {
       const idToken = storage[0][1];
-      const userId = parseInt(storage[1][1]);
+      let userId = storage[1][1];
       this.setState({
         hasToken: idToken !== null,
         isLoaded: true
       });
-      if (idToken !== null && userId !== null) {
+      if (idToken && userId) {
+        userId = parseInt(userId);
         this.props.saveUserData(idToken, userId);
       }
     });
