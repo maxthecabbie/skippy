@@ -1,46 +1,48 @@
-import React, {Component} from "react";
-import {View, Text, StyleSheet} from "react-native";
-import {FormLabel, FormInput, Button, Icon} from "react-native-elements";
-import Config from "react-native-config"
+import React, { Component } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { FormLabel, FormInput, Button, Icon } from "react-native-elements";
+import { constants } from "../constants";
+import Config from "react-native-config";
 
 export class CreateQueue extends Component {
-	constructor(props) {
-		super(props);
+  constructor(props) {
+    super(props);
 
-		this.state = {
-			queueName: ""
-		}
-		this.createQueue = this.createQueue.bind(this);
-	}
+    this.state = {
+      queueName: ""
+    }
+    this.createQueue = this.createQueue.bind(this);
+  }
 
-	createQueue() {
-		const placeId = this.props.placeId;
-		const queueName = this.state.queueName;
-		const backendAPIBaseURL = Config.BACKEND_API_BASE_URL;
-		if (!queueName) {
-			return;
-		}
-		fetch(backendAPIBaseURL + "/queues", {
-			method: "POST",
-			headers: {"Accept": "application/json", "Content-Type": "application/json"},
-			body: JSON.stringify({
-				placeId: placeId,
-				queueName: queueName
-			})
-		})
-		.then((response) => response.json())
-		.then((responseData) => {
-			const queueId = responseData.queueId;
-			const queueName = responseData.queueName;
-			this.props.updateQueues({id: queueId, name: queueName});
-			this.props.closeModal();
-		})
-		.done();
-	}
+  createQueue() {
+    const placeId = this.props.placeId;
+    const queueName = this.state.queueName;
+    const backendAPIBaseURL = Config.BACKEND_API_BASE_URL;
+    if (!queueName) {
+      return;
+    }
+    fetch(backendAPIBaseURL + "/queues", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          requestAction: constants.createQueue,
+          placeId: placeId,
+          queueName: queueName
+        })
+      })
+      .then((response) => response.json())
+      .then((responseData) => {
+        const queueId = responseData.queueId;
+        const queueName = responseData.queueName;
+        this.props.updateQueues({ id: queueId, name: queueName });
+        this.props.closeModal();
+      })
+      .done();
+  }
 
-	render() {
-		return (
-			<View style={styles.createQueueModalContainer}>
+  render() {
+    return (
+      <View style={styles.createQueueModalContainer}>
 				<View style={styles.header}>
 					<Icon name="keyboard-arrow-left"
 					size={30}
@@ -61,28 +63,28 @@ export class CreateQueue extends Component {
 					/>
 				</View>
 			</View>
-		);
-	}	
+    );
+  }
 }
 
 const styles = StyleSheet.create({
-	createQueueModalContainer: {
-		position: "absolute",
-		left: 0,
-		right: 0,
-		top: 0,
-		bottom: 0
-	},
-	header: {
-		flex: 0.5
-	},
-	createQueueForm: {
-		flex: 1
-	},
-	backButton: {
-		position: "absolute",
-		left: 0,
-		marginTop: 10,
-		marginLeft: 10
-	}
+  createQueueModalContainer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0
+  },
+  header: {
+    flex: 0.5
+  },
+  createQueueForm: {
+    flex: 1
+  },
+  backButton: {
+    position: "absolute",
+    left: 0,
+    marginTop: 10,
+    marginLeft: 10
+  }
 })

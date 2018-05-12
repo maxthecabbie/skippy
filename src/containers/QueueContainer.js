@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { View, StyleSheet, Text } from "react-native";
+import { connect } from "react-redux";
 import { FormLabel, FormInput, Button } from "react-native-elements";
 import { QueueUser } from "../components/QueueUser";
 import { QueueAdmin } from "../components/QueueAdmin";
 
-export class QueueContainer extends Component {
+class QueueContainer extends Component {
   constructor(props) {
     super(props);
 
@@ -13,16 +14,47 @@ export class QueueContainer extends Component {
   }
 
   joinQueue() {
-    console.log("Joined");
+    const { queue } = this.props.navigation.state.params;
+    const userId = this.props.userId;
+
+    fetch(backendAPIBaseURL + "/queues", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          requestAction: constants.queueUser,
+          queueId: queue.id,
+          userId: userId
+        })
+      })
+      .then((response) => response.json())
+      .then((responseData) => {
+        console.log("queued");
+      })
+      .done();
   }
 
   dequeueUser() {
-    console.log("Dequeued");
+    const { queue } = this.props.navigation.state.params;
+    const userId = this.props.userId;
+
+    fetch(backendAPIBaseURL + "/queues", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          requestAction: constants.dequeueUser,
+          queueId: queue.id,
+          userId: userId
+        })
+      })
+      .then((response) => response.json())
+      .then((responseData) => {
+        console.log("dequeued");
+      })
+      .done();
   }
 
   render() {
     const { queue, isAdmin } = this.props.navigation.state.params;
-
     if (!isAdmin) {
       return (
         <QueueUser queue={queue} joinQueue={this.joinQueue} />
@@ -35,3 +67,9 @@ export class QueueContainer extends Component {
 
   }
 }
+
+const mapStateToProps = state => ({
+  userId: state.auth.userId
+});
+
+export default connect(mapStateToProps, null)(QueueContainer)
