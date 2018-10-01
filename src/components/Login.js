@@ -108,7 +108,7 @@ class Login extends Component {
 				<View style={styles.linkText}>
 					<Text>
 						Don't have an account yet?&nbsp;
-						<Text onPress={() => this.props.navigation.navigate("SignUp")}>
+						<Text onPress={() => this.props.navigation.navigate("Signup")}>
 							Sign Up!
 						</Text>
 					</Text>

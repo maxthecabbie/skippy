@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { View, Text, Modal, StyleSheet, FlatList, Keyboard } from "react-native";
 import { CreateQueue } from "./CreateQueue"
 import { FormLabel, FormInput, Button } from "react-native-elements";
+import { constants } from "../constants";
+import Config from "react-native-config";
 
 export class Place extends Component {
   constructor(props) {
@@ -20,11 +22,41 @@ export class Place extends Component {
   }
 
   openQueue(queue) {
-    const isAdmin = this.isAdmin();
-    this.props.navigation.navigate("QueueContainer", {
-      queue: queue,
-      isAdmin: isAdmin
-    });
+    fetch(Config.BACKEND_API_BASE_URL + "/queues", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          requestAction: constants.getQueueUsers,
+          queueId: queue.id
+        })
+      })
+      .then((response) =>
+        response.json().then((data) => ({
+          data: data,
+          status: response.status
+        }))
+      )
+      .then((responseData) => {
+        const status = responseData.status;
+        const queueUsers = responseData.data.queueUsers;
+
+        if (status === 200) {
+          const isAdmin = this.isAdmin();
+          this.props.navigation.navigate("QueueContainer", {
+            queue: queue,
+            queueUsers: queueUsers,
+            isAdmin: isAdmin
+          });
+        } else if (status === 400) {
+
+        } else {
+          throw "Unexpected server response";
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        return;
+      });
   }
 
   openCreateQueueModal() {
@@ -110,7 +142,7 @@ export class Place extends Component {
         	renderItem={({item}) => 
         		<Text style={styles.queueListItem} 
         			onPress={() => this.openQueue(item)}>
-        			Queue name: {item.name} 
+        			Queue name: {item.name}
         		</Text>}
         />
 

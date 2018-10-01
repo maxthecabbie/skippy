@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FormLabel, FormInput, Button, Icon } from "react-native-elements";
 import { constants } from "../constants";
+import { ErrorText } from "./ErrorText";
 import Config from "react-native-config";
 
 export class CreateQueue extends Component {
@@ -9,9 +10,11 @@ export class CreateQueue extends Component {
     super(props);
 
     this.state = {
-      queueName: ""
+      queueName: "",
+      errors: null
     }
     this.createQueue = this.createQueue.bind(this);
+    this.handleError = this.handleError.bind(this);
   }
 
   createQueue() {
@@ -30,14 +33,37 @@ export class CreateQueue extends Component {
           queueName: queueName
         })
       })
-      .then((response) => response.json())
+      .then((response) =>
+        response.json().then((data) => ({
+          data: data,
+          status: response.status
+        }))
+      )
       .then((responseData) => {
-        const queueId = responseData.queueId;
-        const queueName = responseData.queueName;
-        this.props.updateQueues({ id: queueId, name: queueName });
-        this.props.closeModal();
+        const status = responseData.status;
+        const queueId = responseData.data.queueId;
+        const queueName = responseData.data.queueName;
+
+        if (status === 200) {
+          this.props.updateQueues({ id: queueId, name: queueName });
+          this.props.closeModal();
+        } else if (status === 400) {
+          this.handleError("There was a problem creating the queue. Please try again.");
+        } else {
+          throw "Unexpected server response";
+        }
       })
-      .done();
+      .catch((error) => {
+        this.handleError("There was a problem creating the queue. Please try again.");
+        return;
+      });
+  }
+
+  handleError(errorMsg) {
+    let errors = [errorMsg];
+    this.setState({
+      errors: errors
+    });
   }
 
   render() {
@@ -61,6 +87,7 @@ export class CreateQueue extends Component {
 					backgroundColor="#6ad447"
 					title="Create"
 					/>
+          <ErrorText errors={this.state.errors} />
 				</View>
 			</View>
     );

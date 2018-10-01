@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { AsyncStorage } from "react-native";
 import { connect } from "react-redux";
+import { authActions } from "../actions/auth";
 import { View, Text, StyleSheet } from "react-native";
 import { FormLabel, FormInput, Button } from "react-native-elements";
 import { ErrorText } from "./ErrorText";

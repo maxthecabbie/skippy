@@ -3,7 +3,7 @@ import { View, StyleSheet, Text } from "react-native";
 import { FormLabel, FormInput, Button } from "react-native-elements";
 
 export const QueueAdmin = (props) => {
-  const { queue, dequeueUser } = props;
+  const { queue, queueUsers, dequeueUser } = props;
 
   return (
     <View style={styles.queueContainer}>
@@ -15,17 +15,21 @@ export const QueueAdmin = (props) => {
 
       <View style={styles.queueInfoContainer}>
         <Text style={styles.queueInfo}>
-          Next user in queue: {"\n"}
-          100
+          Users in queue: {"\n"}
+          {queueUsers.length}
         </Text>
       </View>
-
-      <Button
-      raised
-      onPress={dequeueUser}
-      backgroundColor="#6ad447"
-      title="Dequeue User"
-      />
+      {
+        queueUsers.length > 0 ?
+        <Button
+        raised
+        onPress={dequeueUser}
+        backgroundColor="#6ad447"
+        title="Dequeue User"
+        />
+        :
+        null
+      }
     </View>
   );
 };

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { FormLabel, FormInput, Button, Icon } from "react-native-elements";
-import Config from "react-native-config"
+import Config from "react-native-config";
 
 export class CreatePlace extends Component {
   constructor(props) {
@@ -38,8 +38,6 @@ export class CreatePlace extends Component {
       .then((responseData) => {
         this.props.closeModal();
       })
-      .done();
-
   }
 
   render() {

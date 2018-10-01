@@ -3,7 +3,15 @@ import { View, StyleSheet, Text } from "react-native";
 import { FormLabel, FormInput, Button } from "react-native-elements";
 
 export const QueueUser = (props) => {
-  const { queue, joinQueue } = props;
+  const { queue, queueUsers, userId, joinQueue } = props;
+
+  let pos = null;
+  for (let i = 0; i < queueUsers.length; i++) {
+    if (userId === queueUsers[i].user_id) {
+      pos = i + 1;
+      break;
+    }
+  }
 
   return (
     <View style={styles.queueContainer}>
@@ -13,19 +21,22 @@ export const QueueUser = (props) => {
         </Text>
       </View>
 
-      <Button
-      raised
-      onPress={joinQueue}
-      backgroundColor="#6ad447"
-      title="Join Queue"
-      />
-
-      <View style={styles.queueInfoContainer}>
-        <Text style={styles.queueInfo}>
-          Position in queue: {"\n"}
-          100
-        </Text>
-      </View>
+      {
+        pos !== null ? 
+          <View style={styles.queueInfoContainer}>
+            <Text style={styles.queueInfo}>
+              Position in queue: {"\n"}
+              {pos}
+            </Text>
+          </View>
+          :
+          <Button
+          raised
+          onPress={joinQueue}
+          backgroundColor="#6ad447"
+          title="Join Queue"
+          />
+      }
     </View>
   );
 };

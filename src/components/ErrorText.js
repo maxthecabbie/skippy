@@ -5,7 +5,7 @@ export const ErrorText = (props) => {
 
   const errors = props.errors;
 
-  if (errors !== null) {
+  if (errors) {
     return (
       <Text style={styles.errorText}>
         {errors[0]}
